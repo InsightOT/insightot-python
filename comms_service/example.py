@@ -2,7 +2,7 @@ import asyncio
 import logging
 from device import Device
 
-async def reader_receiver( device: Device ):
+async def device_receiver( device: Device ):
     logger.info( "Starting queue consumer for %s", device.mac_address )
 
     while True:
@@ -15,54 +15,54 @@ async def reader_receiver( device: Device ):
             logger.info( "%s %s: %r", device.mac_address, epoch, data )
 
 async def main( logger: logging.getLogger ):
-    reader_one = Device( logger = logger,
+    device_one = Device( logger = logger,
                          mac_address = "EC:89:40:D8:E0:2A" )
 
-    reader_two = Device( logger = logger,
+    device_two = Device( logger = logger,
                          mac_address = "F2:E1:39:4E:3E:8B" )
 
-    reader_three = Device( logger = logger,
+    device_three = Device( logger = logger,
                            mac_address = "E3:A0:A9:05:EC:45" )
 
-    reader_one_connection_task = asyncio.create_task( reader_one.connect() )
-    reader_one_receiver_task = asyncio.create_task( reader_receiver( reader_one ) )
+    device_one_connection_task = asyncio.create_task( device_one.connect() )
+    device_one_receiver_task = asyncio.create_task( device_receiver( device_one ) )
 
-    reader_two_connection_task = asyncio.create_task( reader_two.connect() )
-    reader_two_receiver_task = asyncio.create_task( reader_receiver( reader_two ) )
+    device_two_connection_task = asyncio.create_task( device_two.connect() )
+    device_two_receiver_task = asyncio.create_task( device_receiver( device_two ) )
 
-    reader_three_connection_task = asyncio.create_task( reader_three.connect() )
-    reader_three_receiver_task = asyncio.create_task( reader_receiver( reader_three ) )
-
-    await asyncio.sleep( 30 )
-
-    if reader_one.client.is_connected:
-        print( f"{reader_one.mac_address} trying to disconnect" )
-        await reader_one.disconnect()
-    else:
-        print( f"{reader_one.mac_address} is not connected" )
+    device_three_connection_task = asyncio.create_task( device_three.connect() )
+    device_three_receiver_task = asyncio.create_task( device_receiver( device_three ) )
 
     await asyncio.sleep( 30 )
 
-    if reader_two.client.is_connected:
-        print( f"{reader_two.mac_address} trying to disconnect" )
-        await reader_two.disconnect()
+    if device_one.client.is_connected:
+        print( f"{device_one.mac_address} trying to disconnect" )
+        await device_one.disconnect()
     else:
-        print( f"{reader_two.mac_address} is not connected" )
+        print( f"{device_one.mac_address} is not connected" )
 
-    if reader_three.client.is_connected:
-        print( f"{reader_three.mac_address} trying to disconnect" )
-        await reader_three.disconnect()
+    await asyncio.sleep( 30 )
+
+    if device_two.client.is_connected:
+        print( f"{device_two.mac_address} trying to disconnect" )
+        await device_two.disconnect()
     else:
-        print( f"{reader_three.mac_address} is not connected" )
+        print( f"{device_two.mac_address} is not connected" )
 
-    await reader_one_connection_task
-    await reader_one_receiver_task
+    if device_three.client.is_connected:
+        print( f"{device_three.mac_address} trying to disconnect" )
+        await device_three.disconnect()
+    else:
+        print( f"{device_three.mac_address} is not connected" )
 
-    await reader_two_connection_task
-    await reader_two_receiver_task
+    await device_one_connection_task
+    await device_one_receiver_task
 
-    await reader_three_connection_task
-    await reader_three_receiver_task
+    await device_two_connection_task
+    await device_two_receiver_task
+
+    await device_three_connection_task
+    await device_three_receiver_task
 
 if __name__ == "__main__":
     log_level = logging.DEBUG
